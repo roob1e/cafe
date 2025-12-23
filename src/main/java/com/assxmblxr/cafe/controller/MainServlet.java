@@ -4,6 +4,7 @@ import com.assxmblxr.cafe.controller.command.Command;
 import com.assxmblxr.cafe.controller.command.impl.*;
 import com.assxmblxr.cafe.dao.impl.OrderDaoImpl;
 import com.assxmblxr.cafe.dao.impl.UserDaoImpl;
+import com.assxmblxr.cafe.exception.CafeException;
 import com.assxmblxr.cafe.service.UserService;
 import com.assxmblxr.cafe.service.impl.UserServiceImpl;
 import jakarta.servlet.ServletException;
@@ -44,11 +45,11 @@ public class MainServlet extends HttpServlet {
   }
 
   @Override
-  protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+  protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     processRequest(req, resp);
   }
 
-  private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+  private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     String commandName = req.getParameter("command");
 
     Command command = commands.getOrDefault(commandName, (request, response) -> Command.PATH_INDEX);
@@ -62,9 +63,9 @@ public class MainServlet extends HttpServlet {
       } else {
         req.getRequestDispatcher(resultPath).forward(req, resp);
       }
-    } catch (Exception e) {
-      log.error("Error executing command: {}", commandName, e);
-      resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    } catch (ServletException e) {
+      log.error(e.getMessage(), e);
+      throw new CafeException(e.getMessage(), e);
     }
   }
 }

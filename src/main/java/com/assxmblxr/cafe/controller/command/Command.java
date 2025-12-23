@@ -1,5 +1,6 @@
 package com.assxmblxr.cafe.controller.command;
 
+import com.assxmblxr.cafe.exception.CafeException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -20,12 +21,5 @@ public interface Command {
   String PATH_ADMIN_USERS = "/WEB-INF/jsp/admin/users.jsp";
   String PATH_ERROR = "/WEB-INF/jsp/error/error500.jsp";
 
-  /**
-   * Выполняет логику команды.
-   * * @param request  объект запроса
-   * @param response объект ответа
-   * @return строка с путем для forward или префикс "redirect:" для редиректа
-   * @throws Exception если что-то пошло не так
-   */
-  String execute(HttpServletRequest request, HttpServletResponse response) throws Exception;
+  String execute(HttpServletRequest request, HttpServletResponse response) throws CafeException;
 }
