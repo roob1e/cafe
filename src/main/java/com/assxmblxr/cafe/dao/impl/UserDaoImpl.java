@@ -7,6 +7,7 @@ import com.assxmblxr.cafe.exception.CafeException;
 import com.assxmblxr.cafe.util.DatabaseUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -143,6 +144,36 @@ public class UserDaoImpl implements UserDao {
       throw new CafeException(e);
     }
     return Optional.empty();
+  }
+
+  @Override
+  public void updateBlockedStatus(long userId, boolean blocked) {
+    String sql = "UPDATE users SET blocked = ? WHERE user_id = ?";
+    try (Connection conn = DatabaseUtil.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+      ps.setBoolean(1, blocked);
+      ps.setLong(2, userId);
+      ps.executeUpdate();
+      log.info("User {} blocked status updated to: {}", userId, blocked);
+    } catch (SQLException e) {
+      log.error("Error updating blocked status for user: {}", userId, e);
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public void updateLoyaltyPoints(long userId, BigDecimal points) {
+    String sql = "UPDATE users SET loyalty_points = ? WHERE user_id = ?";
+    try (Connection conn = DatabaseUtil.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+      ps.setBigDecimal(1, points);
+      ps.setLong(2, userId);
+      ps.executeUpdate();
+      log.info("User {} loyalty points updated to: {}", userId, points);
+    } catch (SQLException e) {
+      log.error("Error updating loyalty points for user: {}", userId, e);
+      throw new RuntimeException(e);
+    }
   }
 
   private User extractUserFromResultSet(ResultSet rs) throws SQLException {

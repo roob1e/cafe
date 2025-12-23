@@ -41,14 +41,6 @@ public class DatabaseUtil {
       props.load(in);
 
       HikariConfig config = new HikariConfig(props);
-      config.setJdbcUrl(props.getProperty("db.url"));
-      config.setUsername(props.getProperty("db.username"));
-      config.setPassword(props.getProperty("db.password"));
-      config.setDriverClassName(props.getProperty("db.driver"));
-
-      int poolSize = Integer.parseInt(props.getProperty("db.poolSize", "10"));
-      config.setMaximumPoolSize(poolSize);
-
       dataSource = new HikariDataSource(config);
     } catch (IOException e) {
       log.error("Got an IOException when loading DB properties", e);
