@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO: Локализация EN, пагинация, разобраться с ролями и логами
+
 @Slf4j
 @WebServlet("/controller")
 public class MainServlet extends HttpServlet {
