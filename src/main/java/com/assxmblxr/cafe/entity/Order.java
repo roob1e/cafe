@@ -1,7 +1,7 @@
 package com.assxmblxr.cafe.entity;
 
-import com.assxmblxr.cafe.entity.enums.OrderStatus;
-import com.assxmblxr.cafe.entity.enums.PaymentMethod;
+import com.assxmblxr.cafe.type.OrderStatus;
+import com.assxmblxr.cafe.type.PaymentMethod;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

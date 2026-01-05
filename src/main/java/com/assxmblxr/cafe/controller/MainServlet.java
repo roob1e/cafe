@@ -25,7 +25,7 @@ public class MainServlet extends HttpServlet {
   private final Map<String, Command> commands = new HashMap<>();
 
   @Override
-  public void init() throws ServletException {
+  public void init() {
     UserService userService = new UserServiceImpl(new UserDaoImpl(), new OrderDaoImpl());
 
     commands.put("login", new LoginCommand(userService));
@@ -40,7 +40,7 @@ public class MainServlet extends HttpServlet {
   }
 
   @Override
-  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     processRequest(req, resp);
   }
 

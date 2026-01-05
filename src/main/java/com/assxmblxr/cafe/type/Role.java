@@ -1,4 +1,4 @@
-package com.assxmblxr.cafe.entity.enums;
+package com.assxmblxr.cafe.type;
 
 public enum Role {
   CLIENT,

@@ -1,7 +1,7 @@
 package com.assxmblxr.cafe.dao.impl;
 
 import com.assxmblxr.cafe.dao.UserDao;
-import com.assxmblxr.cafe.entity.enums.Role;
+import com.assxmblxr.cafe.type.Role;
 import com.assxmblxr.cafe.entity.User;
 import com.assxmblxr.cafe.exception.CafeException;
 import com.assxmblxr.cafe.util.DatabaseUtil;

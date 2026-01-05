@@ -1,6 +1,6 @@
 package com.assxmblxr.cafe.entity;
 
-import com.assxmblxr.cafe.entity.enums.Role;
+import com.assxmblxr.cafe.type.Role;
 
 import java.math.BigDecimal;
 
