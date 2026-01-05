@@ -17,13 +17,12 @@ import java.util.Optional;
 
 @Slf4j
 public class OrderDaoImpl implements OrderDao {
-
-  private static final String INSERT_ORDER = "INSERT INTO orders (user_id, total_price, pickup_time, payment_method, status, created_at) VALUES (?, ?, ?, ?, ?, ?)";
-  private static final String INSERT_ITEM = "INSERT INTO order_items (order_id, menu_item_id, quantity) VALUES (?, ?, ?)";
-  private static final String UPDATE_ORDER = "UPDATE orders SET user_id=?, total_price=?, pickup_time=?, payment_method=?, status=? WHERE order_id=?";
-  private static final String DELETE_ITEMS = "DELETE FROM order_items WHERE order_id = ?";
-  private static final String SELECT_BY_ID = "SELECT * FROM orders WHERE order_id = ?";
-  private static final String SELECT_ALL = "SELECT * FROM orders ORDER BY created_at DESC";
+  String INSERT_ORDER = "INSERT INTO orders (user_id, total_price, pickup_time, payment_method, status, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+  String INSERT_ITEM = "INSERT INTO order_items (order_id, menu_item_id, quantity) VALUES (?, ?, ?)";
+  String UPDATE_ORDER = "UPDATE orders SET user_id=?, total_price=?, pickup_time=?, payment_method=?, status=? WHERE order_id=?";
+  String DELETE_ITEMS = "DELETE FROM order_items WHERE order_id = ?";
+  String SELECT_BY_ID = "SELECT * FROM orders WHERE order_id = ?";
+  String SELECT_ALL = "SELECT * FROM orders ORDER BY created_at DESC";
 
   @Override
   public void create(Order order) {

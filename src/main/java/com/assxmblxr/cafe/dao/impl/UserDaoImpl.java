@@ -18,16 +18,32 @@ import java.util.Optional;
 
 @Slf4j
 public class UserDaoImpl implements UserDao {
+  private static final String INSERT_USER = """
+                INSERT INTO users (name, email, account_balance, loyalty_points, blocked, role, password)
+                VALUES (?, ?, ?, ?, ?, ?, ?);
+                """;
+  private static final String SELECT_BY_ID = "SELECT * FROM users WHERE user_id = ?;";
+  private static final String SELECT_ALL = "SELECT * FROM users;";
+  private static final String UPDATE_USER = """
+               UPDATE users
+               SET name = ?,
+                   email = ?,
+                   account_balance = ?,
+                   loyalty_points = ?,
+                   blocked = ?,
+                   role = ?,
+                   password = ?
+               WHERE user_id = ?;
+               """;
+  private static final String DELETE_USER = "DELETE FROM users WHERE user_id = ?;";
+  private static final String SELECT_BY_EMAIL = "SELECT * FROM users WHERE email = ?;";
+  private static final String UPDATE_BLOCKED_STATUS = "UPDATE users SET blocked = ? WHERE user_id = ?;";
+  private static final String UPDATE_LOYALTY_POINTS = "UPDATE users SET loyalty_points = ? WHERE user_id = ?; ";
 
   @Override
   public void create(User user) {
-    String sql = """
-                INSERT INTO users (name, email, account_balance, loyalty_points, blocked, role, password)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-                """;
-
     try (Connection conn = DatabaseUtil.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+         PreparedStatement ps = conn.prepareStatement(INSERT_USER)) {
       ps.setString(1, user.getName());
       ps.setString(2, user.getEmail());
       ps.setBigDecimal(3, user.getAccountBalance());
@@ -46,10 +62,8 @@ public class UserDaoImpl implements UserDao {
 
   @Override
   public Optional<User> findById(long id) {
-    String sql = "SELECT * FROM users WHERE user_id = ?";
-
     try (Connection conn = DatabaseUtil.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+         PreparedStatement ps = conn.prepareStatement(SELECT_BY_ID)) {
       ps.setLong(1, id);
       try (ResultSet rs = ps.executeQuery()) {
         if (rs.next()) {
@@ -65,11 +79,10 @@ public class UserDaoImpl implements UserDao {
 
   @Override
   public List<User> findAll() {
-    String sql = "SELECT * FROM users";
     List<User> users = new ArrayList<>();
 
     try (Connection conn = DatabaseUtil.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql);
+         PreparedStatement ps = conn.prepareStatement(SELECT_ALL);
          ResultSet rs = ps.executeQuery()) {
       while (rs.next()) {
         users.add(extractUserFromResultSet(rs));
@@ -83,20 +96,8 @@ public class UserDaoImpl implements UserDao {
 
   @Override
   public void update(User user) {
-    String sql = """
-               UPDATE users
-               SET name = ?,
-                   email = ?,
-                   account_balance = ?,
-                   loyalty_points = ?,
-                   blocked = ?,
-                   role = ?,
-                   password = ?
-               WHERE user_id = ?
-               """;
-
     try (Connection conn = DatabaseUtil.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+         PreparedStatement ps = conn.prepareStatement(UPDATE_USER)) {
       ps.setString(1, user.getName());
       ps.setString(2, user.getEmail());
       ps.setBigDecimal(3, user.getAccountBalance());
@@ -116,9 +117,8 @@ public class UserDaoImpl implements UserDao {
 
   @Override
   public void delete(User user) {
-    String sql = "DELETE FROM users WHERE user_id = ?";
     try (Connection conn = DatabaseUtil.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+         PreparedStatement ps = conn.prepareStatement(DELETE_USER)) {
       ps.setLong(1, user.getId());
       ps.executeUpdate();
       log.info("User deleted, id: {}", user.getId());
@@ -130,9 +130,8 @@ public class UserDaoImpl implements UserDao {
 
   @Override
   public Optional<User> findByEmail(String email) {
-    String sql = "SELECT * FROM users WHERE email = ?";
     try (Connection conn = DatabaseUtil.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+         PreparedStatement ps = conn.prepareStatement(SELECT_BY_EMAIL)) {
       ps.setString(1, email);
       try (ResultSet rs = ps.executeQuery()) {
         if (rs.next()) {
@@ -148,9 +147,8 @@ public class UserDaoImpl implements UserDao {
 
   @Override
   public void updateBlockedStatus(long userId, boolean blocked) {
-    String sql = "UPDATE users SET blocked = ? WHERE user_id = ?";
     try (Connection conn = DatabaseUtil.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+         PreparedStatement ps = conn.prepareStatement(UPDATE_BLOCKED_STATUS)) {
       ps.setBoolean(1, blocked);
       ps.setLong(2, userId);
       ps.executeUpdate();
@@ -163,9 +161,8 @@ public class UserDaoImpl implements UserDao {
 
   @Override
   public void updateLoyaltyPoints(long userId, BigDecimal points) {
-    String sql = "UPDATE users SET loyalty_points = ? WHERE user_id = ?";
     try (Connection conn = DatabaseUtil.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+         PreparedStatement ps = conn.prepareStatement(UPDATE_LOYALTY_POINTS)) {
       ps.setBigDecimal(1, points);
       ps.setLong(2, userId);
       ps.executeUpdate();
@@ -184,7 +181,7 @@ public class UserDaoImpl implements UserDao {
             .accountBalance(rs.getBigDecimal("account_balance"))
             .loyaltyPoints(rs.getBigDecimal("loyalty_points"))
             .blocked(rs.getBoolean("blocked"))
-            .role(Role.valueOf(rs.getString("role")))
+            .role(Role.fromString(rs.getString("role")))
             .password(rs.getString("password"))
             .build();
   }

@@ -39,7 +39,9 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public boolean register(User user) {
-    if (userDao.findByEmail(user.getEmail()).isPresent()) return false;
+    if (userDao.findByEmail(user.getEmail()).isPresent()) {
+      return false;
+    }
 
     user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
     user.setLoyaltyPoints(new BigDecimal("5.00"));
@@ -50,8 +52,12 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void placeOrder(User user, Order order) {
-    if (user.isBlocked()) throw new CafeException("User is blocked");
-    if (user.getRole() == Role.ADMIN) throw new CafeException("Admins are not allowed to place orders");
+    if (user.isBlocked()) {
+      throw new CafeException("User is blocked");
+    }
+    if (user.getRole() == Role.ADMIN) {
+      throw new CafeException("Admins are not allowed to place orders");
+    }
 
     if (order.getPaymentMethod() == PaymentMethod.ACCOUNT) {
       if (user.getAccountBalance().compareTo(order.getTotalPrice()) < 0) {
